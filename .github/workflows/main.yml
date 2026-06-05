@@ -8,24 +8,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Get Buildozer Cache Keys
-        id: buildozer-cache-key
-        run: echo "key=buildozer-cache-${{ hashFiles('buildozer.spec') }}" >> $GITHUB_OUTPUT
-
-      - name: Cache Buildozer Global Directory
-        uses: actions/cache@v4
-        with:
-          path: ~/.buildozer
-          key: ${{ steps.buildozer-cache-key.outputs.key }}
-
       - name: Build APK with Buildozer
-        uses: unbrick/buildozer-action@v1
+        uses: ArtemSBulgakov/buildozer-action@v1
+        id: buildozer
         with:
-          command: buildozer android debug
+          repository_root: .
           buildozer_version: stable
 
       - name: Upload Finished APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CoinCollector-Android-APK
-          path: .buildozer/android/platform/build-arm64-v8a_armeabi-v7a/dists/coincollector/build/outputs/apk/debug/
+          path: ${{ steps.buildozer.outputs.filename }}
