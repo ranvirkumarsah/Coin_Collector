@@ -19,7 +19,7 @@ jobs:
           key: ${{ steps.buildozer-cache-key.outputs.key }}
 
       - name: Build APK with Buildozer
-        uses: ArtemGovorov/buildozer-action@v1
+        uses: unbrick/buildozer-action@v1
         with:
           command: buildozer android debug
           buildozer_version: stable
