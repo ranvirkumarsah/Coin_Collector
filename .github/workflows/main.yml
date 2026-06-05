@@ -11,16 +11,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.9'  # Downgraded to 3.9 to prevent C-Header compilation crashes
 
-# --- Update ONLY this section inside your main.yml ---
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          # Removed libgstreamer1.0-dev and libpango1.0-dev to fix the broken dependency error
           sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev tcl-dev tk-dev libgdbm-dev libsqlite3-dev libffi-dev
           pip install setuptools
-
 
       - name: Install Buildozer and Cython
         run: |
@@ -29,12 +26,12 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
-          # Safe execution for automated headless environments
+          # Clean old failed caching records before starting the fresh build
+          buildozer appclean
           yes | buildozer android debug
 
       - name: Upload Finished APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: CoinCollector-Android-APK
-          # Matches the dynamic build output architecture directory exactly
           path: bin/*.apk
